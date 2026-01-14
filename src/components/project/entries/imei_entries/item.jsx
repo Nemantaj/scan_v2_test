@@ -5,6 +5,7 @@ import PrintButton from "../../../common/PrintButton";
 
 import { PrintProductInvoice } from "../details/libs";
 import { memo, useState } from "react";
+import { Box } from "@mantine/core";
 
 const ImeiItem = memo(({ item }) => {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -31,8 +32,7 @@ const ImeiItem = memo(({ item }) => {
   };
 
   return (
-    <Link
-      to={`/entries/${item.orderId}`}
+    <Box
       style={{
         textDecoration: "none",
         display: "block",
@@ -112,7 +112,7 @@ const ImeiItem = memo(({ item }) => {
           />
         </div>
       </div>
-    </Link>
+    </Box>
   );
 });
 

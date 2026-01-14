@@ -34,41 +34,29 @@ export const PrintBulkProductInvoice = async ({ id, filename = "invoice" }) => {
 
   try {
     const res = await fetch(
-      `https://sca-token-api.vercel.app/pdf/${sanitizedId}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/pdf",
-        },
-      }
+      `https://sca-token-api.vercel.app/pdf/${sanitizedId}`
     );
 
     // Check response status
     if (!res.ok) {
       const errorMessage = `Server responded with status ${res.status}: ${res.statusText}`;
-      console.error("PrintProductInvoice:", errorMessage);
+      console.error("PrintBulkProductInvoice:", errorMessage);
       return { success: false, error: errorMessage };
     }
 
-    // Validate content type
-    const contentType = res.headers.get("content-type");
-    if (!contentType?.includes("application/pdf")) {
-      console.error(
-        "PrintBulkProductInvoice: Invalid content type received:",
-        contentType
-      );
-      return { success: false, error: "Invalid response format" };
-    }
-
-    // Get blob and validate
+    // Get blob
     const blob = await res.blob();
-    if (!blob || blob.size === 0) {
+    if (!blob || blob.size <= 0) {
       console.error("PrintBulkProductInvoice: Empty PDF received");
       return { success: false, error: "Empty file received" };
     }
 
+    // Create blob with explicit PDF type
+    objectUrl = window.URL.createObjectURL(
+      new Blob([blob], { type: "application/pdf" })
+    );
+
     // Create download link
-    objectUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = objectUrl;
     link.download = `${filename.replace(/[^a-zA-Z0-9-_]/g, "_")}.pdf`;
@@ -88,7 +76,7 @@ export const PrintBulkProductInvoice = async ({ id, filename = "invoice" }) => {
   } finally {
     // Clean up object URL to prevent memory leak
     if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
+      window.URL.revokeObjectURL(objectUrl);
     }
   }
 };

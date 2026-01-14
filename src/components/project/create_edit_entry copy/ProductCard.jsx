@@ -183,7 +183,7 @@ const PriceWarrantySection = memo(
               color={
                 priceError
                   ? "var(--mantine-color-red-6)"
-                  : "var(--mantine-color-blue-7)"
+                  : "var(--mantine-color-gray-5)"
               }
             />
           }
@@ -192,7 +192,7 @@ const PriceWarrantySection = memo(
           onBlur={() => onPriceChange(localPrice)}
           styles={{
             input: {
-              backgroundColor: "var(--mantine-color-gray-0)",
+              backgroundColor: "white",
               border: priceError
                 ? "1px solid var(--mantine-color-red-5)"
                 : "1px solid var(--mantine-color-gray-3)",
@@ -219,7 +219,7 @@ const PriceWarrantySection = memo(
               color={
                 warrantyError
                   ? "var(--mantine-color-red-6)"
-                  : "var(--mantine-color-blue-7)"
+                  : "var(--mantine-color-gray-5)"
               }
             />
           }
@@ -228,7 +228,7 @@ const PriceWarrantySection = memo(
           onBlur={() => onWarrantyChange(localWarranty)}
           styles={{
             input: {
-              backgroundColor: "var(--mantine-color-gray-0)",
+              backgroundColor: "white",
               border: warrantyError
                 ? "1px solid var(--mantine-color-red-5)"
                 : "1px solid var(--mantine-color-gray-3)",

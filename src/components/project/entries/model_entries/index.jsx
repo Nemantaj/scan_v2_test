@@ -26,6 +26,7 @@ import {
   usePersistentDateRange,
   usePersistentSort,
 } from "../../../common/hooks";
+import useExport from "../../../common/exports/hooks/useExports";
 
 // Local components
 import ModelItem from "./item";
@@ -130,6 +131,51 @@ const ModelEntries = () => {
     [search]
   );
 
+  // Data preparation for Detailed Export (Flatten by IMEI)
+  const flattenedByImei = useMemo(() => {
+    return processedData.flatMap((doc) => {
+      // If no codes, return the doc itself (or skip? User code mapped codes.map().flat())
+      // User code: doc.codes.map(code => ...).flat()
+      // If doc.codes is empty/null, map returns empty array, flat returns empty. So rows disappear.
+      // I will replicate this behavior.
+      return (doc.codes || []).map((code) => ({
+        ...doc,
+        imei: code,
+      }));
+    });
+  }, [processedData]);
+
+  // Hook for Summary Export
+  const { exportExcel: exportSummary } = useExport({
+    list: processedData,
+    title: "Model_Summary",
+    sort: { field: "Date", fieldType: "string" },
+    fields: (doc) => ({
+      Date: doc.date?.slice(0, 10) || "",
+      Name: doc.orderName || "",
+      Product: doc.productName || "",
+      Details: doc.details || "",
+      Price: doc.price || 0,
+      IMEIs: doc.codes?.length || 0,
+      IMEIDetail: (doc.codes || []).join(", "),
+    }),
+  });
+
+  // Hook for Detailed Export
+  const { exportExcel: exportDetailed } = useExport({
+    list: flattenedByImei,
+    title: "Model_Detailed",
+    sort: { field: "Date", fieldType: "string" },
+    fields: (doc) => ({
+      Date: doc.date?.slice(0, 10) || "",
+      Name: doc.orderName || "",
+      Product: doc.productName || "",
+      Details: doc.details || "",
+      Price: doc.price || 0,
+      IMEI: doc.imei || "",
+    }),
+  });
+
   return (
     <>
       <ShellHeader>
@@ -160,8 +206,18 @@ const ModelEntries = () => {
             value={search}
             onChange={handleSearchChange}
           />
-          <NavButton icon={TbFileTypePdf} tint="red" iconColor="#121212" />
-          <NavButton icon={TbFileTypeXls} tint="green" iconColor="#121212" />
+          <NavButton
+            icon={TbFileTypeXls}
+            tint="red"
+            iconColor="red.0"
+            onClick={exportSummary}
+          />
+          <NavButton
+            icon={TbFileTypeXls}
+            tint="green"
+            iconColor="green.0"
+            onClick={exportDetailed}
+          />
         </Group>
       </ShellFooter>
 

@@ -98,7 +98,7 @@ const DeleteCustomerDrawer = ({ isOpen, onClose, customer }) => {
         <Space h={12} />
         <StyledButton
           tint="red"
-          tintOpacity={0.5}
+          tintOpacity={0.9}
           fullWidth
           size="lg"
           onClick={handleOtpConfirm}

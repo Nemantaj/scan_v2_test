@@ -1,5 +1,7 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useDisclosure } from "@mantine/hooks";
 import {
   Box,
   Group,
@@ -23,11 +25,17 @@ import NavButton from "../../../shell/header/menu";
 import SectionHeader from "../../../common/SectionHeader";
 import EmptyList from "../../../common/EmptyList";
 import ProductItem from "./ProductItem";
+import DeleteConfirmDrawer from "../model_entries/DeleteConfirmDrawer";
 import { GetSingleOrder, PrintBulkProductInvoice } from "./libs";
 
 const EntryDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [deleteOpen, { open: openDelete, close: closeDelete }] =
+    useDisclosure(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ["order", id],
@@ -45,17 +53,44 @@ const EntryDetails = () => {
     });
   };
 
+  const handleBack = () => {
+    if (location.state?.from === "/models") {
+      navigate("/models");
+    } else {
+      navigate("/");
+    }
+  };
+
+  const handleDeleteClick = useCallback(
+    (product) => {
+      // Create a compatible item object for DeleteConfirmDrawer
+      const itemToDelete = {
+        ...product,
+        parentId: product._id, // Use product ID for deletion
+        productName: product.name,
+      };
+      setSelectedProduct(itemToDelete);
+      openDelete();
+    },
+    [openDelete]
+  );
+
+  const handleDeleteClose = useCallback(() => {
+    closeDelete();
+    setTimeout(() => setSelectedProduct(null), 300);
+  }, [closeDelete]);
+
   return (
     <>
       {/* Header */}
       <ShellHeader>
         <Group h="100%" justify="space-between">
-          <NavButton icon={TbChevronLeft} onClick={() => navigate(-1)} />
+          <NavButton icon={TbChevronLeft} onClick={handleBack} />
           <NavButton
             icon={TbPencil}
             tint="pink"
             tintOpacity={0.15}
-            link={`/edit/${id}`}
+            link={`/entries/${id}/edit`}
           />
         </Group>
       </ShellHeader>
@@ -111,6 +146,7 @@ const EntryDetails = () => {
                       key={product._id || product.name}
                       product={product}
                       orderId={id}
+                      onDeleteClick={handleDeleteClick}
                     />
                   ))}
                 </Accordion>
@@ -125,6 +161,13 @@ const EntryDetails = () => {
           </>
         )}
       </Box>
+
+      <DeleteConfirmDrawer
+        isOpen={deleteOpen}
+        onClose={handleDeleteClose}
+        item={selectedProduct}
+        handleBack={handleBack}
+      />
     </>
   );
 };

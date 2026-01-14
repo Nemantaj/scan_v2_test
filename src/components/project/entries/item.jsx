@@ -35,7 +35,15 @@ const ProductCard = memo(({ product }) => {
       <Text size="sm" c="dark.6" fw={400} truncate="end">
         {product.name}{" "}
         {variant && (
-          <Text pl={4} size="sm" c="green.9" span fw={400} truncate="end">
+          <Text
+            pl={4}
+            size="sm"
+            c="green.9"
+            span
+            fw={400}
+            maw={120}
+            truncate="end"
+          >
             {variant}
           </Text>
         )}

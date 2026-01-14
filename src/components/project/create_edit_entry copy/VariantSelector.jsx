@@ -81,11 +81,11 @@ const VariantSelector = memo(
                         border:
                           value === variant
                             ? "none"
-                            : "1.5px solid var(--mantine-color-gray-3)",
+                            : "1.5px solid var(--mantine-color-gray-2)",
                         background:
                           value === variant
                             ? "linear-gradient(135deg, #8B5CF6, #A78BFA)"
-                            : "var(--mantine-color-gray-0)",
+                            : "white",
                         color:
                           value === variant
                             ? "white"
@@ -107,12 +107,12 @@ const VariantSelector = memo(
             py={16}
             px={12}
             style={{
-              borderRadius: 8,
+              borderRadius: 12,
               backgroundColor: "var(--mantine-color-gray-0)",
               border: "1.5px dashed var(--mantine-color-gray-3)",
             }}
           >
-            <Text size="sm" c="gray.7" ta="center">
+            <Text size="sm" c="gray.5" ta="center">
               Select a product to see variants
             </Text>
           </Box>

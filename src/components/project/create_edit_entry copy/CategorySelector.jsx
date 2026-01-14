@@ -74,7 +74,7 @@ const CategoryCard = memo(({ category, isSelected, onSelect }) => {
         borderRadius: 14,
         background: isSelected
           ? `linear-gradient(135deg, ${category.from}, ${category.to})`
-          : "var(--mantine-color-gray-0)",
+          : "white",
         border: isSelected ? "none" : "1.5px solid var(--mantine-color-gray-2)",
         // boxShadow: isSelected
         //   ? `0 4px 12px ${category.from}40`
@@ -93,7 +93,7 @@ const CategoryCard = memo(({ category, isSelected, onSelect }) => {
             borderRadius: 10,
             backgroundColor: isSelected
               ? "rgba(255,255,255,0.25)"
-              : "var(--mantine-color-gray-1 )",
+              : "var(--mantine-color-gray-0)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -126,7 +126,7 @@ CategoryCard.displayName = "CategoryCard";
 
 const CategorySelector = memo(({ value, onChange, error }) => {
   return (
-    <Box pt={16}>
+    <Box pt={16} pb={8}>
       <Text px={20} size="sm" mb={10} fw={500} c={error ? "red.6" : "gray.7"}>
         Choose a Category {error && "*"}
       </Text>

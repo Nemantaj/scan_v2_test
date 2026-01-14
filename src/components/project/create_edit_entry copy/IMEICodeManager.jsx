@@ -66,7 +66,7 @@ const IMEICodeManager = memo(
         {/* Input Row */}
         <Group gap={8} wrap="nowrap">
           <TextInput
-            placeholder="Enter IMEI number..."
+            placeholder="Enter IMEI or serial number"
             size="md"
             radius="md"
             value={inputValue}
@@ -75,7 +75,7 @@ const IMEICodeManager = memo(
             style={{ flex: 1 }}
             styles={{
               input: {
-                backgroundColor: "var(--mantine-color-gray-0)",
+                backgroundColor: "white",
                 border: error
                   ? "1px solid var(--mantine-color-red-5)"
                   : "1px solid var(--mantine-color-gray-3)",
@@ -190,9 +190,8 @@ const IMEICodeManager = memo(
               border: "1px dashed var(--mantine-color-gray-3)",
             }}
           >
-            <Text size="sm" c="gray.7" ta="center">
-              No codes added yet. Enter manually, scan via scanner or press
-              "Scan" to scan barcode.
+            <Text size="sm" c="gray.5" ta="center">
+              No codes added yet. Enter manually or scan barcode.
             </Text>
           </Box>
         )}

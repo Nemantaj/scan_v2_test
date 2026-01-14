@@ -30,14 +30,13 @@ const Section1CustomerInfo = ({ form }) => {
 
         {/* Customer Name Input */}
         <TextInput
-          // variant="filled"
           placeholder="Enter Party name"
           size="md"
           radius="md"
-          leftSection={<TbUser size={18} color="var(--mantine-color-blue-7)" />}
+          leftSection={<TbUser size={18} />}
           styles={{
             input: {
-              backgroundColor: "var(--mantine-color-gray-0)",
+              backgroundColor: "white",
               border: "1px solid var(--mantine-color-gray-3)",
               "&:focus": {
                 borderColor: "var(--mantine-color-violet-5)",
@@ -52,14 +51,12 @@ const Section1CustomerInfo = ({ form }) => {
           placeholder="Select entry date"
           size="md"
           radius="md"
-          leftSection={
-            <TbCalendar size={18} color="var(--mantine-color-blue-7)" />
-          }
+          leftSection={<TbCalendar size={18} />}
           valueFormat="DD MMM YYYY"
           maxDate={new Date()}
           styles={{
             input: {
-              backgroundColor: "var(--mantine-color-gray-0)",
+              backgroundColor: "white",
               border: "1px solid var(--mantine-color-gray-3)",
               "&:focus": {
                 borderColor: "var(--mantine-color-violet-5)",

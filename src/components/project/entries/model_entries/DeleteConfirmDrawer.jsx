@@ -6,18 +6,28 @@ import { TbLock } from "react-icons/tb";
 import SheetDrawer from "../../../common/drawers/sheet";
 import StyledButton from "../../../common/StyledButton";
 
+import { notifications } from "@mantine/notifications";
+
 const DELETE_OTP = "788983";
 
-const DeleteConfirmDrawer = ({ isOpen, onClose, item }) => {
+const DeleteConfirmDrawer = ({ isOpen, onClose, item, handleBack }) => {
   const queryClient = useQueryClient();
+
   const [otpValue, setOtpValue] = useState("");
   const [otpError, setOtpError] = useState(false);
 
   // Delete mutation
   const { mutate: deleteMutate, isPending: deleteLoading } = useMutation({
     mutationFn: async () => {
+      const setForDeletion = await fetch(
+        `https://sca-token-api.vercel.app/delete/get-otp/${item?._id}`
+      );
+
+      if (!setForDeletion.ok)
+        throw new Error(`An error has occurred: ${setForDeletion.status}`);
+
       const res = await fetch(
-        `https://sca-token-api.vercel.app/delete/validate-otp/7789?id=${item?.parentId}`
+        `https://sca-token-api.vercel.app/delete/validate-otp/7789?id=${item?._id}`
       );
       if (!res.ok) throw new Error(`An error has occurred: ${res.status}`);
       const data = await res.json();
@@ -27,9 +37,20 @@ const DeleteConfirmDrawer = ({ isOpen, onClose, item }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       handleClose();
+
+      if (handleBack) {
+        handleBack();
+      }
     },
-    onError: (error) => {
-      window.alert(error?.message || "Failed to delete entry");
+    onError: (err) => {
+      console.log(err);
+
+      notifications.show({
+        title: "Error",
+        message: err?.message || "Something went wrong!",
+        autoClose: 1500,
+        color: "red",
+      });
     },
   });
 
@@ -75,9 +96,9 @@ const DeleteConfirmDrawer = ({ isOpen, onClose, item }) => {
           <Text size="lg" fw={600} c="dark.8">
             Confirm Deletion
           </Text>
-          <Text size="sm" c="gray.6" ta="center" px="md">
+          <Text size="sm" c="gray.7" ta="center" px="md">
             Enter the 6-digit code to delete{" "}
-            <Text span fw={600} c="dark.7">
+            <Text span fw={500} c="dark.7">
               {item.productName}
             </Text>
           </Text>
@@ -105,7 +126,7 @@ const DeleteConfirmDrawer = ({ isOpen, onClose, item }) => {
         <Space h={12} />
         <StyledButton
           tint="red"
-          tintOpacity={0.5}
+          tintOpacity={0.95}
           fullWidth
           size="lg"
           onClick={handleOtpConfirm}

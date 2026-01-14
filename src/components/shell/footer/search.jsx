@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextInput, Box } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { TbSearch } from "react-icons/tb";
+import { TbSearch, TbX } from "react-icons/tb";
 
 const SearchBar = ({
   placeholder = "Search...",
@@ -56,6 +56,17 @@ const SearchBar = ({
         leftSection={
           <TbSearch size="1.25rem" color="var(--mantine-color-gray-6)" />
         }
+        rightSection={
+          localValue ? (
+            <TbX
+              style={{ cursor: "pointer" }}
+              size="1.25rem"
+              color="var(--mantine-color-gray-5)"
+              onClick={() => setLocalValue("")}
+            />
+          ) : null
+        }
+        rightSectionPointerEvents="all"
         placeholder={placeholder}
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
@@ -64,7 +75,7 @@ const SearchBar = ({
           input: {
             height: 44,
             paddingLeft: 44,
-            paddingRight: 16,
+            paddingRight: 44,
             fontSize: 14,
           },
           section: {

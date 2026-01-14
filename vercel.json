@@ -1,0 +1,5 @@
+{
+  "version": 2,
+  "name": "marvans_scan_v2_app",
+  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+}

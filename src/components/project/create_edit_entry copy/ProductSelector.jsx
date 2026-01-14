@@ -111,8 +111,8 @@ const ProductSelector = memo(
               placeholder={
                 !category ? "Choose category first..." : "Search products..."
               }
-              size="md"
-              radius="md"
+              size="lg"
+              radius={8}
               value={value || search}
               onChange={handleChange}
               onClick={() => combobox.openDropdown()}
@@ -129,8 +129,8 @@ const ProductSelector = memo(
                 input: {
                   backgroundColor: disabled
                     ? "var(--mantine-color-gray-1)"
-                    : "var(--mantine-color-gray-0)",
-                  border: "1.5px solid var(--mantine-color-gray-3)",
+                    : "white",
+                  border: "1.5px solid var(--mantine-color-gray-2)",
                   height: 48,
                   fontSize: 15,
                 },
@@ -140,7 +140,7 @@ const ProductSelector = memo(
 
           <Combobox.Dropdown
             style={{
-              border: "1.5px solid var(--mantine-color-gray-3)",
+              border: "1.5px solid var(--mantine-color-gray-2)",
               borderRadius: 14,
               boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
               padding: 6,

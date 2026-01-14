@@ -16,7 +16,7 @@ const ModelItem = memo(({ item, onDeleteClick }) => {
   const { mutate: printMutate, isPending: printLoading } = useMutation({
     mutationFn: () =>
       PrintBulkProductInvoice({
-        id: item.parentId,
+        id: item._id,
         filename: `Invoice_${item.productName}_${item.orderName}`,
       }),
     onSuccess: (result) => {
@@ -48,6 +48,7 @@ const ModelItem = memo(({ item, onDeleteClick }) => {
   return (
     <Link
       to={`/entries/${item.parentId}`}
+      state={{ from: "/models" }}
       style={{
         textDecoration: "none",
         display: "block",
