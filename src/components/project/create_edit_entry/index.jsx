@@ -29,7 +29,7 @@ import { CreateEntry, EditEntry, GetEntry } from "./libs";
 const EDIT_OTP_CODE = "788983";
 
 // Validate a single product
-const validateProduct = (product, index) => {
+const validateProduct = (product) => {
   const errors = {};
 
   if (!product.category) {
@@ -110,17 +110,23 @@ const CreateEditEntry = () => {
       if (scannerProductIndex !== null) {
         const currentCodes =
           form.values.products[scannerProductIndex]?.codes || [];
-        if (!currentCodes.includes(code)) {
-          form.setFieldValue(`products.${scannerProductIndex}.codes`, [
-            ...currentCodes,
-            code,
-          ]);
+        if (currentCodes.includes(code)) {
           notifications.show({
-            title: "Code Added",
-            message: `Added ${code}`,
-            color: "green",
+            title: "Duplicate Code",
+            message: `${code} already exists`,
+            color: "yellow",
           });
+          return;
         }
+        form.setFieldValue(`products.${scannerProductIndex}.codes`, [
+          ...currentCodes,
+          code,
+        ]);
+        notifications.show({
+          title: "Code Added",
+          message: `Added ${code}`,
+          color: "green",
+        });
       }
     },
     [scannerProductIndex, form]
@@ -216,7 +222,7 @@ const CreateEditEntry = () => {
 
     if (validation.hasErrors) {
       const productErrors = form.values.products
-        .map((p, i) => validateProduct(p, i))
+        .map((p) => validateProduct(p))
         .filter(Boolean);
 
       if (productErrors.length > 0) {

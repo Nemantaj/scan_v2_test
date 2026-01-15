@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback, memo } from "react";
-import { Box, Divider, Space } from "@mantine/core";
+import { Box, Center, Divider, Space } from "@mantine/core";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useLocation } from "react-router-dom";
 
@@ -127,8 +127,8 @@ const VirtualList = ({
 
   if (!loading && data.length === 0 && emptyComponent) {
     return (
-      <Box pt={paddingTop} style={{ height, overflowY: "auto" }}>
-        {emptyComponent}
+      <Box pt={paddingTop} style={{ height: 452, overflowY: "auto" }}>
+        <Center h="100%">{emptyComponent}</Center>
       </Box>
     );
   }

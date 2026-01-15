@@ -96,9 +96,8 @@ const Section2Products = memo(({ form, onScannerOpen }) => {
           });
 
           return (
-            <>
+            <Box key={product._id || `product-${index}`}>
               <ProductCard
-                key={index}
                 product={product}
                 index={index}
                 products={productData}
@@ -109,8 +108,8 @@ const Section2Products = memo(({ form, onScannerOpen }) => {
                 onRemove={() => handleRemoveProduct(index)}
                 onScannerOpen={() => onScannerOpen?.(index)}
               />
-              <Divider key={`${index}-divider`} variant="dashed" />
-            </>
+              <Divider variant="dashed" />
+            </Box>
           );
         })}
       </Stack>

@@ -38,21 +38,79 @@ export const imeiSortComparators = {
   orderName: (a, b) => (a.orderName || "").localeCompare(b.orderName || ""),
 };
 
-// Search filter function for IMEIs
+// Parse search query into terms, keeping dates and variants as phrases
+const parseSearchQuery = (query) => {
+  const lowerQuery = query.toLowerCase().trim();
+  if (!lowerQuery) return [];
+
+  const searchTerms = [];
+
+  // Match patterns: "DD mon", "DD mon YYYY", or "NNNNN gb/GB"
+  const datePattern =
+    /(\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)(?:\s+\d{4})?)/gi;
+  const variantPattern = /(\d+\s*gb)/gi;
+
+  let processedQuery = lowerQuery;
+
+  // Extract date patterns
+  const dates = lowerQuery.match(datePattern);
+  if (dates) {
+    dates.forEach((date) => {
+      searchTerms.push(date.toLowerCase().replace(/\s+/g, " "));
+      processedQuery = processedQuery.replace(date, " ");
+    });
+  }
+
+  // Extract variant patterns (like "512 gb", "128gb")
+  const variants = processedQuery.match(variantPattern);
+  if (variants) {
+    variants.forEach((variant) => {
+      searchTerms.push(variant.toLowerCase().replace(/\s+/g, ""));
+      processedQuery = processedQuery.replace(variant, " ");
+    });
+  }
+
+  // Add remaining words
+  const remainingWords = processedQuery.split(/\s+/).filter(Boolean);
+  searchTerms.push(...remainingWords);
+
+  return searchTerms;
+};
+
+// Search filter function for IMEIs - with intelligent phrase detection
 export const filterImeisBySearch = (data, query) => {
   if (!query) return data;
 
-  const lowerQuery = query.toLowerCase().trim();
+  const searchTerms = parseSearchQuery(query);
+  if (searchTerms.length === 0) return data;
 
   return data.filter((item) => {
-    if (item.codes?.toLowerCase().includes(lowerQuery)) return true;
-    if (item.name?.toLowerCase().includes(lowerQuery)) return true;
-    if (item.orderName?.toLowerCase().includes(lowerQuery)) return true;
+    // Collect all searchable text
+    const searchableTexts = [];
 
-    const formattedDate = moment(item.date).format("DD MMM YYYY").toLowerCase();
-    if (formattedDate.includes(lowerQuery)) return true;
+    if (item.codes) searchableTexts.push(item.codes.toLowerCase());
+    if (item.name) searchableTexts.push(item.name.toLowerCase());
+    if (item.orderName) searchableTexts.push(item.orderName.toLowerCase());
+    if (item.details) {
+      const details = item.details.toLowerCase();
+      searchableTexts.push(details);
+      searchableTexts.push(details.replace(/\s+/g, ""));
+    }
 
-    return false;
+    searchableTexts.push(moment(item.date).format("DD MMM YYYY").toLowerCase());
+
+    const combinedText = searchableTexts.join(" ");
+    const normalizedText = combinedText.replace(/\s+/g, " ");
+
+    return searchTerms.every((term) => {
+      if (/^\d+gb$/i.test(term)) {
+        return (
+          normalizedText.includes(term) ||
+          combinedText.replace(/\s/g, "").includes(term)
+        );
+      }
+      return normalizedText.includes(term);
+    });
   });
 };
 

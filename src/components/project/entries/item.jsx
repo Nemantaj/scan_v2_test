@@ -139,9 +139,15 @@ const EntryItem = memo(({ item }) => {
             <ScanBadge count={totalItems} size="lg" />
           </div>
           <Stack gap={2}>
-            {item?.products?.map((product, idx) => (
-              <ProductCard key={product._id || idx} product={product} />
-            ))}
+            {item?.products?.length > 0 ? (
+              item?.products?.map((product, idx) => (
+                <ProductCard key={product._id || idx} product={product} />
+              ))
+            ) : (
+              <Text size="sm" c="gray.6">
+                No products
+              </Text>
+            )}
           </Stack>
         </Box>
       </Group>

@@ -20,6 +20,12 @@ const formatDateRange = (range) => {
   if (!range[1]) return startDate;
 
   const endDate = moment(range[1]).format("D MMM");
+
+  // If both dates are the same, show only once
+  if (moment(range[0]).isSame(range[1], "day")) {
+    return startDate;
+  }
+
   return `${startDate} - ${endDate}`;
 };
 
@@ -90,7 +96,8 @@ const DateRange = ({ value, onChange }) => {
               type="range"
               value={tempRange}
               onChange={setTempRange}
-              maxDate={new Date()}
+              allowSingleDateInRange
+              // maxDate={new Date()}
             />
           </Stack>
 

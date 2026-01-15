@@ -1,14 +1,15 @@
-import { Link } from "react-router-dom";
+import { memo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import moment from "moment";
+import { useClipboard } from "@mantine/hooks";
+import { ActionIcon, Box, Group, Tooltip } from "@mantine/core";
+import { TbCopy, TbCheck } from "react-icons/tb";
 import PrintButton from "../../../common/PrintButton";
-
 import { PrintProductInvoice } from "../details/libs";
-import { memo, useState } from "react";
-import { Box } from "@mantine/core";
 
 const ImeiItem = memo(({ item }) => {
   const [showSuccess, setShowSuccess] = useState(false);
+  const clipboard = useClipboard({ timeout: 1500 });
 
   const { mutate, isPending } = useMutation({
     mutationFn: () =>
@@ -29,6 +30,12 @@ const ImeiItem = memo(({ item }) => {
     e.preventDefault();
     e.stopPropagation();
     mutate();
+  };
+
+  const handleCopy = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    clipboard.copy(item.codes);
   };
 
   return (
@@ -68,18 +75,38 @@ const ImeiItem = memo(({ item }) => {
               flexDirection: "column",
             }}
           >
-            <div
-              style={{
-                fontWeight: 600,
-                color: "#1F2937", // dark.8
-                fontFamily: "monospace",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {item.codes}
-            </div>
+            <Group gap={8}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  color: "#1F2937", // dark.8
+                  fontFamily: "monospace",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.codes || "N/A"}
+              </div>
+              <Tooltip
+                label={clipboard.copied ? "Copied!" : "Copy IMEI"}
+                withArrow
+              >
+                <ActionIcon
+                  variant="transparent"
+                  color={clipboard.copied ? "teal" : "gray"}
+                  size="xs"
+                  onClick={handleCopy}
+                  radius={0}
+                >
+                  {clipboard.copied ? (
+                    <TbCheck size={18} />
+                  ) : (
+                    <TbCopy size={18} />
+                  )}
+                </ActionIcon>
+              </Tooltip>
+            </Group>
             <div
               style={{
                 fontSize: "14px", // size="sm"

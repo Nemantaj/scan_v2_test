@@ -8,7 +8,6 @@ import {
   TbPackage,
   TbAlertCircle,
   TbPencil,
-  TbChevronDown,
 } from "react-icons/tb";
 import moment from "moment";
 
@@ -18,7 +17,7 @@ import SectionHeader from "../../../common/SectionHeader";
 import EmptyList from "../../../common/EmptyList";
 import ProductItem from "./ProductItem";
 import DeleteConfirmDrawer from "../model_entries/DeleteConfirmDrawer";
-import { GetSingleOrder, PrintBulkProductInvoice } from "./libs";
+import { GetSingleOrder } from "./libs";
 import EntryDetailsSkeleton from "./EntryDetailsSkeleton";
 
 const EntryDetails = () => {
@@ -38,13 +37,6 @@ const EntryDetails = () => {
 
   const totalScans =
     data?.products?.reduce((acc, p) => acc + (p.codes?.length || 0), 0) || 0;
-
-  const handlePrint = async () => {
-    await PrintBulkProductInvoice({
-      id,
-      filename: `Invoice_${data?.name || id}`,
-    });
-  };
 
   const handleBack = () => {
     if (location.state?.from === "/models") {
@@ -127,8 +119,8 @@ const EntryDetails = () => {
                   variant="default"
                   radius="md"
                   chevronPosition="right"
-                  chevron={<TbChevronDown size="1.25rem" />}
                   bg="#fff"
+                  defaultValue={data.products[0]?._id || data.products[0]?.name}
                 >
                   {data.products.map((product) => (
                     <ProductItem
