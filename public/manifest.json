@@ -75,24 +75,11 @@
   ],
   "share_target": {
     "action": "/share",
-    "method": "POST",
-    "enctype": "multipart/form-data",
+    "method": "GET",
     "params": {
       "title": "title",
       "text": "text",
-      "url": "url",
-      "files": [
-        {
-          "name": "images",
-          "accept": ["image/*"]
-        }
-      ]
+      "url": "url"
     }
-  },
-  "protocol_handlers": [
-    {
-      "protocol": "web+marvans",
-      "url": "/protocol?data=%s"
-    }
-  ]
+  }
 }
