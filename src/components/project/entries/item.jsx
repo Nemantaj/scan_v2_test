@@ -41,8 +41,9 @@ const ProductCard = memo(({ product }) => {
             c="green.9"
             span
             fw={400}
-            maw={120}
+            maw={180}
             truncate="end"
+            style={{ display: "inline-block", verticalAlign: "bottom" }}
           >
             {variant}
           </Text>

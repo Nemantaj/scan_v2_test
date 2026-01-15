@@ -20,7 +20,7 @@ const TINTS = {
 const VARIANTS = {
   glass: (tint = "none", opacity = 0.9) => ({
     background: `rgba(${TINTS[tint]?.bg || TINTS.none.bg}, ${opacity})`,
-    backdropFilter: "blur(10px) saturate(180%)",
+    backdropFilter: "blur(0px) saturate(180%)",
     WebkitBackdropFilter: "blur(10px) saturate(180%)",
     border: `1px solid rgba(${TINTS[tint]?.border || TINTS.none.border}, 0.15)`,
   }),

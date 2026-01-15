@@ -83,13 +83,13 @@ const ProductItem = ({ product, orderId, onDeleteClick }) => {
                   {product.name}
                 </Text>
                 {product.category && (
-                  <Text size="xs" c="gray.6" truncate="end">
+                  <Text size="xs" c="gray.7" truncate="end">
                     {product.details}
                   </Text>
                 )}
               </Stack>
             </Group>
-            <Group gap={8} wrap="nowrap">
+            <Group gap={0} wrap="nowrap">
               <ScanBadge size="lg" count={itemCount} />
               <ItemActionMenu
                 onPrint={handlePrint}

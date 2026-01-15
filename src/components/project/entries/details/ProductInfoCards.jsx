@@ -21,13 +21,14 @@ const ProductInfoCards = ({ product }) => {
           <Text size="sm" fw={600} c="dark.8">
             Warranty Period
           </Text>
-          <Text size="xs" c="gray.6" lh={1.5}>
+          <Text size="xs" c="gray.7" lh={1.5}>
             Covered under manufacturer warranty
           </Text>
           <Text
             mt={8}
             size="sm"
             fw={500}
+            c="teal.7"
             // mb={4}
             // style={{ letterSpacing: "-0.02em" }}
           >
@@ -53,7 +54,7 @@ const ProductInfoCards = ({ product }) => {
                 Product Details
               </Text>
               <Text
-                size="lg"
+                size="sm"
                 fw={500}
                 c="pink.7"
                 style={{ letterSpacing: "-0.02em" }}
@@ -76,7 +77,7 @@ const ProductInfoCards = ({ product }) => {
                 Unit Price
               </Text>
               <Text
-                size="lg"
+                size="sm"
                 fw={500}
                 c="green.7"
                 style={{ letterSpacing: "-0.02em" }}

@@ -37,6 +37,7 @@ const SearchBar = ({
 
   return (
     <Box
+      bd="1px solid #dee2e6"
       style={{
         background: `rgba(${bgColor}, ${tintOpacity})`,
         backdropFilter: "blur(0px) saturate(500%)",

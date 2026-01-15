@@ -56,7 +56,7 @@ const DateRange = ({ value, onChange }) => {
     >
       <Popover.Target>
         <Paper
-          radius="xl"
+          withBorder
           style={{
             background: "rgba(255,255,255,0.9)",
             backdropFilter: "blur(0px) saturate(500%)",
@@ -67,6 +67,7 @@ const DateRange = ({ value, onChange }) => {
               inset 0 -1px 2px rgba(255, 255, 255, 0.5)
             `,
           }}
+          radius="xl"
         >
           <button
             type="button"

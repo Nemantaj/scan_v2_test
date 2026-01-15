@@ -169,8 +169,8 @@ const NavMenu = ({
         className="transition-all duration-300 transform active:scale-95"
       />
       <FloatingDrawer
-        variant="solid"
-        tint="green"
+        variant="glass"
+        tint="dark"
         tintOpacity={0.9}
         isOpen={opened}
         onClose={() => setOpened(false)}

@@ -44,6 +44,8 @@ const VariantSelector = memo(
       );
     }
 
+    const variantsGrid = category === "iWatch" ? 2 : 3;
+
     // For products with variants (including Airpods), show chips
     return (
       <Box>
@@ -52,56 +54,64 @@ const VariantSelector = memo(
         </Text>
 
         {displayVariants.length > 0 ? (
-          <ScrollArea scrollbarSize={0} type="scroll" offsetScrollbars={false}>
-            <Chip.Group value={value} onChange={onChange}>
-              <Box
-                style={{
-                  display: "flex",
-                  gap: 8,
-                  flexWrap: "nowrap",
-                  paddingBottom: 4,
-                }}
-              >
-                {displayVariants.map((variant) => (
-                  <Chip
-                    key={variant}
-                    value={variant}
-                    size="md"
-                    radius={10}
-                    variant="outline"
-                    color="#fff"
-                    styles={{
-                      label: {
-                        height: 40,
-                        paddingLeft: 16,
-                        paddingRight: 16,
-                        fontSize: 14,
-                        fontWeight: 500,
-                        whiteSpace: "nowrap",
-                        border:
-                          value === variant
-                            ? "none"
-                            : "1.5px solid var(--mantine-color-gray-3)",
-                        background:
-                          value === variant
-                            ? "linear-gradient(135deg, #8B5CF6, #A78BFA)"
-                            : "var(--mantine-color-gray-0)",
-                        color:
-                          value === variant
-                            ? "white"
-                            : "var(--mantine-color-gray-7)",
-                      },
-                      iconWrapper: {
-                        display: value === variant ? "flex" : "none",
-                      },
-                    }}
-                  >
-                    {variant}
-                  </Chip>
-                ))}
-              </Box>
-            </Chip.Group>
-          </ScrollArea>
+          <Chip.Group value={value} onChange={onChange}>
+            <Box
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${variantsGrid}, 1fr)`,
+                gap: 8,
+              }}
+            >
+              {displayVariants.map((variant) => (
+                <Chip
+                  key={variant}
+                  value={variant}
+                  size="md"
+                  radius={10}
+                  variant="outline"
+                  color="#fff"
+                  styles={{
+                    root: {
+                      width: "100%",
+                      height: "100%",
+                    },
+                    label: {
+                      width: "100%",
+                      height: "100%",
+                      minHeight: 40,
+                      paddingTop: 8,
+                      paddingBottom: 8,
+                      paddingLeft: 16,
+                      paddingRight: 16,
+                      fontSize: 14,
+                      fontWeight: 500,
+                      textAlign: "center",
+                      whiteSpace: "normal",
+                      wordBreak: "break-word",
+                      border:
+                        value === variant
+                          ? "none"
+                          : "1.5px solid var(--mantine-color-gray-3)",
+                      background:
+                        value === variant
+                          ? "linear-gradient(135deg, #8B5CF6, #A78BFA)"
+                          : "var(--mantine-color-gray-0)",
+                      color:
+                        value === variant
+                          ? "white"
+                          : "var(--mantine-color-gray-7)",
+                      lineHeight: 1.4,
+                    },
+                    iconWrapper: {
+                      display: "none",
+                    },
+                  }}
+                >
+                  {variant}
+                </Chip>
+              ))}
+            </Box>
+          </Chip.Group>
         ) : (
           <Box
             py={16}

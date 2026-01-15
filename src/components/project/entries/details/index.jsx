@@ -2,15 +2,7 @@ import { useState, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  Box,
-  Group,
-  Loader,
-  Center,
-  Alert,
-  Divider,
-  Accordion,
-} from "@mantine/core";
+import { Box, Group, Alert, Divider, Accordion } from "@mantine/core";
 import {
   TbChevronLeft,
   TbPackage,
@@ -27,6 +19,7 @@ import EmptyList from "../../../common/EmptyList";
 import ProductItem from "./ProductItem";
 import DeleteConfirmDrawer from "../model_entries/DeleteConfirmDrawer";
 import { GetSingleOrder, PrintBulkProductInvoice } from "./libs";
+import EntryDetailsSkeleton from "./EntryDetailsSkeleton";
 
 const EntryDetails = () => {
   const { id } = useParams();
@@ -97,11 +90,7 @@ const EntryDetails = () => {
 
       <Box>
         {/* Loading State */}
-        {isPending && (
-          <Center py={100}>
-            <Loader size="lg" color="violet" />
-          </Center>
-        )}
+        {isPending && <EntryDetailsSkeleton />}
 
         {/* Error State */}
         {isError && (

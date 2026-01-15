@@ -95,6 +95,7 @@ const StyledButton = ({
 
   return (
     <Button
+      bd="1px solid #dee2e6"
       h={sizeConfig.height}
       px={sizeConfig.px}
       fz={sizeConfig.fontSize}

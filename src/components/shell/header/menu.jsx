@@ -77,6 +77,7 @@ const NavButton = ({
 
   return (
     <Paper
+      withBorder
       shadow={shadow ? "md" : "none"}
       style={{
         background: variantConfig.background,

@@ -107,7 +107,7 @@ const ModelEntries = () => {
       <>
         <SectionHeader
           pt={72}
-          title="Model Search"
+          title="By Product Entries"
           subtitle={`Showing ${processedData.length} models for ${dateRangeStr}`}
         />
         <Divider />

@@ -79,7 +79,7 @@ const ProjectEntries = () => {
       <>
         <SectionHeader
           pt={72}
-          title="Person Entries"
+          title="Main Entries"
           subtitle={`Showing ${processedData.length} entries for ${dateRangeStr}`}
         />
         <Divider />
@@ -127,7 +127,7 @@ const ProjectEntries = () => {
       <ShellFooter>
         <Group h="100%">
           <SearchBar
-            placeholder="Search entries with name, date, product, imei"
+            placeholder="Search with name, date, imei"
             value={search}
             onChange={handleSearchChange}
           />
