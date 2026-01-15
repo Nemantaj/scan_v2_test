@@ -31,7 +31,7 @@ const EntryDetails = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["order", id],
+    queryKey: ["orders", id],
     queryFn: () => GetSingleOrder(id),
     enabled: !!id,
   });

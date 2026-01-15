@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import ShellHeader from "../../shell/header";
 import NavButton from "../../shell/header/menu";
@@ -58,6 +58,8 @@ const CreateEditEntry = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditMode = !!id;
+
+  const queryClient = useQueryClient();
 
   const [scannerOpen, { open: openScannerDrawer, close: closeScannerDrawer }] =
     useDisclosure(false);
@@ -154,6 +156,10 @@ const CreateEditEntry = () => {
         });
         form.reset();
         navigate("/");
+
+        queryClient.invalidateQueries({
+          queryKey: ["orders"],
+        });
       } else {
         notifications.show({
           title: "Error",
@@ -183,6 +189,10 @@ const CreateEditEntry = () => {
         });
         closeOtp();
         navigate(`/entries/${id}`);
+
+        queryClient.invalidateQueries({
+          queryKey: ["orders"],
+        });
       } else {
         notifications.show({
           title: "Error",

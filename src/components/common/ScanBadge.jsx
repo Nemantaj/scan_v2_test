@@ -52,6 +52,7 @@ const ScanBadge = ({ count = 0, showIcon = true, size = "md" }) => {
 
   return (
     <Box
+      bd={`1px solid #dee2e6`}
       px={config.px}
       py={config.py}
       style={{
@@ -72,7 +73,7 @@ const ScanBadge = ({ count = 0, showIcon = true, size = "md" }) => {
           />
         )}
         <Text
-          size={config.fontSize}
+          // size={config.fontSize}
           fw={600}
           lh={1}
           style={{
