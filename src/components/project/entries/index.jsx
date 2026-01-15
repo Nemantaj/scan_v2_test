@@ -48,7 +48,9 @@ const ProjectEntries = () => {
     queryFn: () => GetOrders({ date: dateRange }),
   });
 
-  const loading = isPending || isRefetching;
+  // Only show loading skeleton on initial load, not on refetch
+  // isRefetching will update data in background while showing cached data
+  const showSkeleton = isPending && data.length === 0;
 
   // Filter and sort data
   const processedData = useMemo(
@@ -116,7 +118,7 @@ const ProjectEntries = () => {
         data={processedData}
         height="100dvh"
         paddingTop={0}
-        loading={loading}
+        loading={showSkeleton}
         loadingComponent={<EntrySkeleton />}
         renderItem={renderEntryItem}
         header={listHeader}

@@ -55,7 +55,7 @@ const ModelEntries = () => {
     queryFn: () => GetOrders({ date: dateRange }),
   });
 
-  const loading = isPending || isRefetching;
+  const loading = isPending && data.length === 0;
 
   // Process data (flatten, filter, sort)
   const processedData = useMemo(
