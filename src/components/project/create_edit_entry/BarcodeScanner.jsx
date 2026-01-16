@@ -643,7 +643,7 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
               leftSection={<TbRefresh size={20} />}
               onClick={resetScanner}
             >
-              Scan Again
+              Again
             </StyledButton>
             <StyledButton
               fullWidth
@@ -655,7 +655,7 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
               onClick={handleConfirm}
               disabled={!!error}
             >
-              Add Code
+              Add
             </StyledButton>
           </Group>
         )}
