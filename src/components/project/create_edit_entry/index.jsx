@@ -311,9 +311,13 @@ const CreateEditEntry = () => {
           pt={72}
           title={isEditMode ? "Edit Entry" : "New Entry"}
           subtitle={
-            isEditMode
-              ? "Update the entry details below"
-              : "Fill the form below to create a new entry"
+            <>
+              {isEditMode
+                ? "Update the entry details below"
+                : "Fill the form below to create a new entry"}
+              <br />
+              Build Version: 1001
+            </>
           }
         />
         <Divider />
