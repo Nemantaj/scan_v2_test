@@ -1,5 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Box, Stack, Text, Group, TextInput, Paper } from "@mantine/core";
+import {
+  Box,
+  Stack,
+  Text,
+  Group,
+  TextInput,
+  Paper,
+  Select,
+} from "@mantine/core";
 import {
   TbCheck,
   TbRefresh,
@@ -7,6 +15,7 @@ import {
   TbScan,
   TbBulb as TbFlash,
   TbBulbOff as TbFlashOff,
+  TbCamera,
 } from "react-icons/tb";
 import { Html5Qrcode } from "html5-qrcode";
 import StyledButton from "../../common/StyledButton";
@@ -23,54 +32,65 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
   const [cameraError, setCameraError] = useState(false);
   const [torch, setTorch] = useState(false);
   const [isStarting, setIsStarting] = useState(true);
+
+  // Camera selection state
+  const [cameras, setCameras] = useState([]);
+  const [selectedCameraId, setSelectedCameraId] = useState(null);
+  const [loadingCameras, setLoadingCameras] = useState(true);
+
   const scannerRef = useRef(null);
   const isMountedRef = useRef(true);
 
-  // Helper to find the main (non-ultrawide) back camera
-  const getMainCamera = async () => {
-    try {
-      const cameras = await Html5Qrcode.getCameras();
-      if (!cameras || cameras.length === 0) return null;
-
-      // Filter for back/rear cameras
-      const backCameras = cameras.filter((cam) => {
-        const label = cam.label.toLowerCase();
-        return (
-          label.includes("back") ||
-          label.includes("rear") ||
-          label.includes("environment")
-        );
-      });
-
-      const candidateCameras = backCameras.length > 0 ? backCameras : cameras;
-
-      // Prefer main camera: exclude ultrawide/wide, prefer "main" or no special label
-      const mainCamera = candidateCameras.find((cam) => {
-        const label = cam.label.toLowerCase();
-        // Skip ultrawide cameras
-        if (label.includes("ultra") || label.includes("wide")) return false;
-        // Prefer if labeled as main
-        if (label.includes("main")) return true;
-        // Accept cameras without wide-angle indicators
-        return true;
-      });
-
-      // Fallback: if all are ultrawide, just pick the first back camera
-      return mainCamera || candidateCameras[0] || cameras[0];
-    } catch (err) {
-      console.error("Error getting cameras:", err);
-      return null;
-    }
-  };
-
-  // Initialize scanner
+  // Load available cameras on mount
   useEffect(() => {
-    if (!scanning) return;
+    const loadCameras = async () => {
+      try {
+        const availableCameras = await Html5Qrcode.getCameras();
+        if (availableCameras && availableCameras.length > 0) {
+          setCameras(availableCameras);
+
+          // Try to find main back camera (prefer non-ultrawide)
+          const backCameras = availableCameras.filter((cam) => {
+            const label = cam.label.toLowerCase();
+            return (
+              label.includes("back") ||
+              label.includes("rear") ||
+              label.includes("environment")
+            );
+          });
+
+          const candidates =
+            backCameras.length > 0 ? backCameras : availableCameras;
+
+          // Prefer main camera (exclude ultrawide/wide)
+          const mainCamera = candidates.find((cam) => {
+            const label = cam.label.toLowerCase();
+            if (label.includes("ultra") || label.includes("wide")) return false;
+            return true;
+          });
+
+          const defaultCamera =
+            mainCamera || candidates[0] || availableCameras[0];
+          setSelectedCameraId(defaultCamera.id);
+        }
+      } catch (err) {
+        console.error("Error loading cameras:", err);
+        setCameraError(true);
+      } finally {
+        setLoadingCameras(false);
+      }
+    };
+
+    loadCameras();
+  }, []);
+
+  // Start scanner when camera is selected
+  useEffect(() => {
+    if (!scanning || !selectedCameraId || loadingCameras) return;
 
     isMountedRef.current = true;
     setIsStarting(true);
 
-    // Small delay to ensure DOM is ready
     const initTimer = setTimeout(async () => {
       const scannerElement = document.getElementById(SCANNER_ID);
       if (!scannerElement || !isMountedRef.current) return;
@@ -86,27 +106,25 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
       };
 
       try {
-        // Try to get specific main camera first
-        const mainCamera = await getMainCamera();
-        const cameraId = mainCamera
-          ? { deviceId: mainCamera.id }
-          : { facingMode: "environment" };
+        await html5QrCode.start(
+          { deviceId: selectedCameraId },
+          config,
+          (decodedText) => {
+            if (!isMountedRef.current) return;
+            const cleaned = cleanCode(decodedText);
+            if (cleaned.length >= 5) {
+              html5QrCode.stop().catch(() => {});
+              setScannedValue(cleaned);
+              setScanning(false);
 
-        await html5QrCode.start(cameraId, config, (decodedText) => {
-          if (!isMountedRef.current) return;
-          const cleaned = cleanCode(decodedText);
-          if (cleaned.length >= 5) {
-            html5QrCode.stop().catch(() => {});
-            setScannedValue(cleaned);
-            setScanning(false);
-
-            if (existingCodes.includes(cleaned)) {
-              setError("This code already exists");
-            } else {
-              setError("");
+              if (existingCodes.includes(cleaned)) {
+                setError("This code already exists");
+              } else {
+                setError("");
+              }
             }
           }
-        });
+        );
 
         if (isMountedRef.current) {
           setIsStarting(false);
@@ -134,7 +152,28 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
         }
       }
     };
-  }, [scanning, existingCodes]);
+  }, [scanning, selectedCameraId, existingCodes, loadingCameras]);
+
+  // Handle camera change
+  const handleCameraChange = useCallback(
+    async (newCameraId) => {
+      if (!newCameraId || newCameraId === selectedCameraId) return;
+
+      // Stop current scanner
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        try {
+          await scannerRef.current.stop();
+        } catch (e) {
+          // Ignore
+        }
+      }
+
+      setSelectedCameraId(newCameraId);
+      setScanning(true);
+      setIsStarting(true);
+    },
+    [selectedCameraId]
+  );
 
   const resetScanner = useCallback(() => {
     setScannedValue("");
@@ -172,8 +211,33 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
     }
   }, [torch]);
 
+  // Format camera options for Select
+  const cameraOptions = cameras.map((cam, index) => ({
+    value: cam.id,
+    label: cam.label || `Camera ${index + 1}`,
+  }));
+
   return (
     <Stack gap={16} py={8}>
+      {/* Camera Selector - shown when multiple cameras available */}
+      {cameras.length > 1 && scanning && !isStarting && (
+        <Select
+          value={selectedCameraId}
+          onChange={handleCameraChange}
+          data={cameraOptions}
+          size="sm"
+          radius="md"
+          leftSection={<TbCamera size={16} />}
+          placeholder="Select camera"
+          styles={{
+            input: {
+              backgroundColor: "var(--mantine-color-gray-0)",
+              border: "1px solid var(--mantine-color-gray-3)",
+            },
+          }}
+        />
+      )}
+
       {/* Scanner Container */}
       <Box
         style={{
@@ -227,7 +291,7 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
             />
 
             {/* Loading overlay */}
-            {isStarting && (
+            {(isStarting || loadingCameras) && (
               <Stack
                 align="center"
                 justify="center"
@@ -240,13 +304,13 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
               >
                 <TbScan size={40} color="var(--mantine-color-violet-5)" />
                 <Text size="sm" c="gray.5">
-                  Starting camera...
+                  {loadingCameras ? "Loading cameras..." : "Starting camera..."}
                 </Text>
               </Stack>
             )}
 
             {/* Torch button */}
-            {!isStarting && (
+            {!isStarting && !loadingCameras && (
               <Box
                 style={{
                   position: "absolute",
@@ -268,7 +332,7 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
             )}
 
             {/* Bottom hint */}
-            {!isStarting && (
+            {!isStarting && !loadingCameras && (
               <Box
                 style={{
                   position: "absolute",
@@ -371,7 +435,7 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
       </Group>
 
       {/* Tips */}
-      {!scannedValue && !cameraError && !isStarting && (
+      {!scannedValue && !cameraError && !isStarting && !loadingCameras && (
         <Text size="xs" c="gray.5" ta="center">
           Hold steady • Good lighting • Keep barcode flat
         </Text>
