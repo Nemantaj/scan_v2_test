@@ -21,7 +21,7 @@ const TINTS = {
 const VARIANTS = {
   glass: (tint = "none", opacity = 0.5) => ({
     background: `rgba(${TINTS[tint]?.bg || TINTS.none.bg}, ${opacity})`,
-    backdropFilter: "blur(0px) saturate(500%)",
+    backdropFilter: "blur(0px) saturate(1000%)",
     color: TINTS[tint]?.iconColor || "dark",
   }),
   solid: {

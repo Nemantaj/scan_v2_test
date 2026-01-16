@@ -26,6 +26,43 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
   const scannerRef = useRef(null);
   const isMountedRef = useRef(true);
 
+  // Helper to find the main (non-ultrawide) back camera
+  const getMainCamera = async () => {
+    try {
+      const cameras = await Html5Qrcode.getCameras();
+      if (!cameras || cameras.length === 0) return null;
+
+      // Filter for back/rear cameras
+      const backCameras = cameras.filter((cam) => {
+        const label = cam.label.toLowerCase();
+        return (
+          label.includes("back") ||
+          label.includes("rear") ||
+          label.includes("environment")
+        );
+      });
+
+      const candidateCameras = backCameras.length > 0 ? backCameras : cameras;
+
+      // Prefer main camera: exclude ultrawide/wide, prefer "main" or no special label
+      const mainCamera = candidateCameras.find((cam) => {
+        const label = cam.label.toLowerCase();
+        // Skip ultrawide cameras
+        if (label.includes("ultra") || label.includes("wide")) return false;
+        // Prefer if labeled as main
+        if (label.includes("main")) return true;
+        // Accept cameras without wide-angle indicators
+        return true;
+      });
+
+      // Fallback: if all are ultrawide, just pick the first back camera
+      return mainCamera || candidateCameras[0] || cameras[0];
+    } catch (err) {
+      console.error("Error getting cameras:", err);
+      return null;
+    }
+  };
+
   // Initialize scanner
   useEffect(() => {
     if (!scanning) return;
@@ -34,7 +71,7 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
     setIsStarting(true);
 
     // Small delay to ensure DOM is ready
-    const initTimer = setTimeout(() => {
+    const initTimer = setTimeout(async () => {
       const scannerElement = document.getElementById(SCANNER_ID);
       if (!scannerElement || !isMountedRef.current) return;
 
@@ -48,41 +85,39 @@ const BarcodeScanner = ({ onScan, onClose, existingCodes = [] }) => {
         disableFlip: false,
       };
 
-      html5QrCode
-        .start(
-          { facingMode: "environment" },
-          config,
-          (decodedText) => {
-            if (!isMountedRef.current) return;
-            const cleaned = cleanCode(decodedText);
-            if (cleaned.length >= 5) {
-              html5QrCode.stop().catch(() => {});
-              setScannedValue(cleaned);
-              setScanning(false);
+      try {
+        // Try to get specific main camera first
+        const mainCamera = await getMainCamera();
+        const cameraId = mainCamera
+          ? { deviceId: mainCamera.id }
+          : { facingMode: "environment" };
 
-              if (existingCodes.includes(cleaned)) {
-                setError("This code already exists");
-              } else {
-                setError("");
-              }
+        await html5QrCode.start(cameraId, config, (decodedText) => {
+          if (!isMountedRef.current) return;
+          const cleaned = cleanCode(decodedText);
+          if (cleaned.length >= 5) {
+            html5QrCode.stop().catch(() => {});
+            setScannedValue(cleaned);
+            setScanning(false);
+
+            if (existingCodes.includes(cleaned)) {
+              setError("This code already exists");
+            } else {
+              setError("");
             }
-          },
-          () => {
-            // Ignore scan errors
-          }
-        )
-        .then(() => {
-          if (isMountedRef.current) {
-            setIsStarting(false);
-          }
-        })
-        .catch((err) => {
-          console.error("Scanner error:", err);
-          if (isMountedRef.current) {
-            setCameraError(true);
-            setIsStarting(false);
           }
         });
+
+        if (isMountedRef.current) {
+          setIsStarting(false);
+        }
+      } catch (err) {
+        console.error("Scanner error:", err);
+        if (isMountedRef.current) {
+          setCameraError(true);
+          setIsStarting(false);
+        }
+      }
     }, 100);
 
     return () => {

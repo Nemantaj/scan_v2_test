@@ -74,7 +74,8 @@ const EntryDetails = () => {
           <NavButton
             icon={TbPencil}
             tint="pink"
-            tintOpacity={0.15}
+            tintOpacity={0.9}
+            iconColor="#fff"
             link={`/entries/${id}/edit`}
           />
         </Group>
