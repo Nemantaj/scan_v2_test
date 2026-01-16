@@ -36,8 +36,36 @@
   ],
   "screenshots": [
     {
-      "src": "/android-chrome-512x512.png",
-      "sizes": "512x512",
+      "src": "/screen_1.png",
+      "sizes": "368x800",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Marvans Scan Mobile"
+    },
+    {
+      "src": "/screen_2.png",
+      "sizes": "368x800",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Marvans Scan Mobile"
+    },
+    {
+      "src": "/screen_3.png",
+      "sizes": "368x800",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Marvans Scan Mobile"
+    },
+    {
+      "src": "/screen_4.png",
+      "sizes": "368x800",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Marvans Scan Mobile"
+    },
+    {
+      "src": "/screen_5.png",
+      "sizes": "368x800",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Marvans Scan Mobile"
